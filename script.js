@@ -1,14 +1,12 @@
-var app = angular.module('app', ['ngAnimate', 'ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.grouping', 'ui.bootstrap']);
+var app = angular.module('app', ['ngAnimate', 'ngCookies', 'ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.grouping', 'ui.bootstrap']);
 
-app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingConstants, $location) {
+app.controller('MainCtrl', function($cookies, $scope, $http, uiGridGroupingConstants, $location) {
 
-    $scope.user = {};
     //get test user token
     var testUser = {
         'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
         'username': 'nporto'
     };
-    $scope.user = testUser;
 
 
     /*-----Integration with the authentication example --------AUTH-----*/
@@ -21,7 +19,7 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
 
 
     // Retrieving a cookie and set initial user object
-    $scope.user = $scope.cookie = $cookies.getObject('CARRE_USER');
+    $scope.user = $scope.cookie = $cookies.getObject('CARRE_USER') || testUser;
 
     // Retrieving url params
     var params = $location.search();
@@ -45,7 +43,7 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
     $location.url('/').replace();
 
 
-
+    /*-----------end of authentication --------AUTH---------------*/
 
     var TOKEN = $scope.user.oauth_token;
     var USERGRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
