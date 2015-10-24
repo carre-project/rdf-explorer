@@ -4,11 +4,11 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
 
     $scope.user = {};
     //get test user token
-    // var testUser={
-    //     'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
-    //     'username': 'nporto'
-    // };
-    // $scope.user = testUser;
+    var testUser={
+        'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
+        'username': 'nporto'
+    };
+    $scope.user = testUser;
 
     // normally you would do something like this
     // $scope.user = $cookieStore.get('CARRE_USER') || {};

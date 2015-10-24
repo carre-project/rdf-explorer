@@ -39,27 +39,30 @@
                 <h4 ng-show="user.username">Hi {{user.username}}</h4>
                 <h4 ng-show="!user.username">Hi, you are not logged in, <a href="">Login now</a></h4>
 
-                <div ng-show="!user.username">
-                    <div class="col-xs-12">
+                <uib-tabset type="pills">
+
+                    <uib-tab heading="Instances method" select="instancesRequest()">
+                        <hr>
                         <select name="singleSelect" style="width:300px; display:inline" class="form-control" ng-model="selectedType">
                             <option ng-repeat="option in instanceTypes" value="{{option}}">{{option}}</option>
                         </select>
                         <button id="refreshButton" type="button" class="btn btn-primary" ng-click="instancesRequest()">Refresh Data</button>
-                    </div>
+                    </uib-tab>
 
-                </div>
+                    <uib-tab heading="Sparql method" select="sparqlRequest(radioModel)" ng-show="user.username">
+                        <hr>
+                        <div class="btn-group">
+                            <label ng-model="radioModel" uib-btn-radio="'private'" class="btn btn-default" ng-click="sparqlRequest(radioModel)">Private RDF</label>
+                            <label ng-model="radioModel" uib-btn-radio="'public'" class="btn btn-default" ng-click="sparqlRequest(radioModel)">Public RDF</label>
+                        </div>
 
-                <div ng-show="user.username">
+                        <label>Limit results
+                            <input min="1" max="10000" ng-model-options="{debounce: 1000}" type="number" ng-change="sparqlRequest(radioModel)" ng-model="limit" class="form-control">
+                        </label>
+                    </uib-tab>
 
-                    <div class="btn-group">
-                        <label ng-model="radioModel" uib-btn-radio="'private'" class="btn btn-default" ng-click="sparqlRequest(radioModel)">Private RDF</label>
-                        <label ng-model="radioModel" uib-btn-radio="'public'" class="btn btn-default" ng-click="sparqlRequest(radioModel)">Public RDF</label>
-                    </div>
+                </uib-tabset>
 
-                    <label>Limit results
-                        <input min="1" max="10000" ng-model-options="{debounce: 1000}" type="number" ng-change="sparqlRequest(radioModel)" ng-model="limit" class="form-control">
-                    </label>
-                </div>
             </div>
             <div cg-busy="dataLoad" id="grid1" ui-grid="mygrid" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns ui-grid-exporter ui-grid-grouping class="grid"></div>
 
