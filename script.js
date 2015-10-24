@@ -50,14 +50,14 @@ app.config(function($locationProvider) {
     var TOKEN = $scope.user.oauth_token;
     var USERGRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
     var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
-    var API = 'https://devices.carre-project.eu:443/ws/';
+    var API = 'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk/ws/'; // http://carre.kmi.open.ac.uk/ws/
 
 
     /*------SPARQL QUERY METHOD----------*/
     $scope.radioModel = 'public'; //set the default request to public
     $scope.limit = 100; //set the default limit to 100
 
-    $scope.sparqlRequest = function(type) {
+    $scope.sparqlRequest = function(type,limit) {
         console.log('Request using SPARQL query method');
 
         $scope.radioModel = type;
@@ -66,7 +66,7 @@ app.config(function($locationProvider) {
             GRAPH = USERGRAPH;
         }
         //example sparql query
-        var SPARQL = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object } LIMIT ' + $scope.limit;
+        var SPARQL = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object } LIMIT ' + (limit||$scope.limit);
         //make request and assign the promise to a variable for loading features
         $scope.dataLoad = $http.post(API + 'query', {
             'sparql': SPARQL,

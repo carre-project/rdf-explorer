@@ -39,7 +39,7 @@
             <div class="page-header">
                 <h1>CARRE RDF explorer 
                 <small ng-show="user.username">Hi {{user.username}}, <a ng-href="{{logoutUrl}}">Logout</a></small>
-                <small ng-show="!user.username">Hi, you are not logged in, <a ng-href="{{loginUrl}}">Login</a></small>
+                <small ng-show="!user.username">Hello guest, please <a ng-href="{{loginUrl}}">Login</a></small>
             </div>
             <div>
                 <uib-tabset type="pills">
@@ -60,7 +60,7 @@
                         </div>
 
                         <label>Limit results
-                            <input min="1" max="10000" ng-model-options="{debounce: 1000}" type="number" ng-change="sparqlRequest(radioModel)" ng-model="limit" class="form-control">
+                            <input min="1" max="10000" ng-model-options="{debounce: 1000}" type="number" ng-change="sparqlRequest(radioModel,limit)" ng-model="limit" class="form-control">
                         </label>
                     </uib-tab>
 
