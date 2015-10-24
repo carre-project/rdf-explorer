@@ -6,8 +6,8 @@ app.config(function($locationProvider) {
 
     //get test user token
     var testUser = {
-        'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
-        'username': 'Test User'
+        // 'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
+        // 'username': 'Test User'
     };
 
 
@@ -16,8 +16,8 @@ app.config(function($locationProvider) {
     //set up the urls 
     var CARRE_DEVICES = 'http://devices.carre-project.eu/devices/accounts';
     var baseUrl = $location.absUrl();
-    $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl + '?login'; //pass the login as a parameter to catch later
-    $scope.logoutUrl = CARRE_DEVICES + '/logout?next=' + baseUrl + '?logout'; //same for the logout
+    $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl; //pass the login as a parameter to catch later
+    $scope.logoutUrl = CARRE_DEVICES + '/logout?next=' + baseUrl; //same for the logout
 
 
     // Retrieving a cookie and set initial user object
@@ -50,7 +50,7 @@ app.config(function($locationProvider) {
     var TOKEN = $scope.user.oauth_token;
     var USERGRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
     var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
-    var API = 'https://carre.kmi.open.ac.uk:443/ws/';
+    var API = 'https://devices.carre-project.eu:443/ws/';
 
 
     /*------SPARQL QUERY METHOD----------*/
