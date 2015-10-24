@@ -1,7 +1,6 @@
-var app = angular.module('app', ['ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.importer', 'ui.grid.grouping']);
+var app = angular.module('app', ['ngAnimate', 'ui.bootstrap','ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.importer', 'ui.grid.grouping']);
 
-app.controller('MainCtrl', ['$cookieStore', '$scope', '$http', '$timeout', '$interval', 'uiGridConstants', 'uiGridGroupingConstants',
-    function($cookieStore, $scope, $http, $timeout, $interval, uiGridConstants, uiGridGroupingConstants) {
+app.controller('MainCtrl', function($cookieStore, $scope, $http, $timeout, $interval, uiGridConstants, uiGridGroupingConstants) {
 
         //get user token
         $scope.user = $cookieStore.get('CARRE_USER') || {
@@ -14,7 +13,7 @@ app.controller('MainCtrl', ['$cookieStore', '$scope', '$http', '$timeout', '$int
 
 
         $scope.sparqlRequest = function(type) {
-
+            $scope.radioModel=type;
             var GRAPH = '<http://carre.kmi.open.ac.uk/beta>'
             if (type === 'private' && TOKEN) {
                 GRAPH = USERGRAPH;
