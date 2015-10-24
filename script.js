@@ -3,13 +3,16 @@ var app = angular.module('app', ['ngAnimate', 'ngTouch', 'cgBusy', 'ngCookies', 
 app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingConstants) {
 
     //get user token
-    $scope.user = $cookieStore.get('CARRE_USER') || {
+    var testUser={
         'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
         'username': 'nporto'
     };
+    // $scope.user = $cookieStore.get('CARRE_USER') || {};
+    $scope.user = testUser;
     
     var TOKEN = $scope.user.oauth_token;
     var USERGRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
+    var PUBLICGRAPH= '<http://carre.kmi.open.ac.uk/beta>';
     var API = 'https://carre.kmi.open.ac.uk:443/ws/query';
     
     $scope.radioModel='public'; //set the default request to public
@@ -17,7 +20,7 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
     
     $scope.sparqlRequest = function(type) {
         $scope.radioModel = type;
-        var GRAPH = '<http://carre.kmi.open.ac.uk/beta>'
+        var GRAPH = PUBLICGRAPH;
         if (type === 'private' && TOKEN) {
             GRAPH = USERGRAPH;
         }
