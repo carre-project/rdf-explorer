@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngAnimate', 'ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.grouping','ui.bootstrap']);
+var app = angular.module('app', ['ngAnimate', 'ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.grouping','ui.bootstrap']);
 
 app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingConstants) {
 
@@ -65,6 +65,7 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
     $scope.mygrid.columnDefs = [{
         name: 'subject_pretty',
         displayName: 'Subject',
+        enableCellEdit: true,
         cellTooltip: function(row, col) {
             return row.entity.subject;
         },
@@ -74,12 +75,14 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
     }, {
         name: 'predicate_pretty',
         displayName: 'Predicate',
+        enableCellEdit: true,
         cellTooltip: function(row, col) {
             return row.entity.predicate;
         }
     }, {
         name: 'object_pretty',
         displayName: 'Object',
+        enableCellEdit: true,
         cellTooltip: function(row, col) {
             return row.entity.object;
         }
