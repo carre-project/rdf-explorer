@@ -1,66 +1,104 @@
-var app = angular.module('app', ['ngAnimate', 'ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.grouping','ui.bootstrap']);
+var app = angular.module('app', ['ngAnimate', 'ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.grouping', 'ui.bootstrap']);
 
 app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingConstants) {
 
+    $scope.user = {};
     //get test user token
-    var testUser={
-        'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
-        'username': 'nporto'
-    };
-    $scope.user = testUser;
-    
+    // var testUser={
+    //     'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
+    //     'username': 'nporto'
+    // };
+    // $scope.user = testUser;
+
     // normally you would do something like this
     // $scope.user = $cookieStore.get('CARRE_USER') || {};
-    
+
     var TOKEN = $scope.user.oauth_token;
     var USERGRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
-    var PUBLICGRAPH= '<http://carre.kmi.open.ac.uk/beta>';
+    var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
     var API = 'https://carre.kmi.open.ac.uk:443/ws/query';
-    
-    $scope.radioModel='public'; //set the default request to public
-    $scope.limit=100; //set the default limit to 100
-    
+
+    $scope.radioModel = 'public'; //set the default request to public
+    $scope.limit = 100; //set the default limit to 100
+
     $scope.sparqlRequest = function(type) {
+        console.log('Request using SPARQL query method');
+
         $scope.radioModel = type;
         var GRAPH = PUBLICGRAPH;
         if (type === 'private' && TOKEN) {
             GRAPH = USERGRAPH;
         }
         //example sparql query
-        var SPARQL = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object } LIMIT '+$scope.limit;
+        var SPARQL = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object } LIMIT ' + $scope.limit;
         //make request and assign the promise to a variable for loading features
         $scope.dataLoad = $http.post(API, {
             'sparql': SPARQL,
             'token': TOKEN
         }).success(function(data) {
             // console.log('Raw results: ', data);
-            
+
             //convert raw results to ui-grid compatible data using map function
             $scope.mygrid.data = data.map(function(obj) {
-                var row = {};
-                row.predicate = obj.predicate.value;
-                row.subject = obj.subject.value;
-                row.object = obj.object.value;
-                row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
-                row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
-                row.object_pretty = row.object.substring(row.object.lastIndexOf('/') + 1);
-                
-                return row;
-            })
-            // console.log('Filtered : ', $scope.mygrid.data);
+                    var row = {};
+                    row.predicate = obj.predicate.value;
+                    row.subject = obj.subject.value;
+                    row.object = obj.object.value;
+                    row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
+                    row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
+                    row.object_pretty = row.object.substring(row.object.lastIndexOf('/') + 1);
+
+                    return row;
+                })
+                // console.log('Filtered : ', $scope.mygrid.data);
         });
 
     };
-    
+
+    $scope.instancesRequest = function() {
+        console.log('Request using Instances method');
+
+        //make request and assign the promise to a variable for loading features
+        $scope.dataLoad = $http.get(API, {
+            'type': $scope.instancesType
+        }).success(function(data) {
+            console.log('Raw results: ', data);
+
+            //convert raw results to ui-grid compatible data using map function
+            $scope.mygrid.data = data.map(function(obj) {
+                var row = {};
+                row.predicate = obj.predicate;
+                row.subject = obj.subject;
+                row.object = obj.object;
+                row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
+                row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
+                row.object_pretty = row.object.substring(row.object.lastIndexOf('/') + 1);
+
+                return row;
+            })
+            console.log('Filtered : ', $scope.mygrid.data);
+        });
+
+    };
+
     //initiate the default request
-    $scope.sparqlRequest($scope.radioModel);
+    if ($scope.user.username) {
+        //if you have token do sparql request
+
+        $scope.sparqlRequest($scope.radioModel);
+    }
+    else {
+        //do the instances request
+        $scope.instancesRequest($scope.radioModel);
+
+    }
 
 
 
     /* GRID STUFF */
 
     $scope.mygrid = {};
-    $scope.mygrid.data=[];
+    $scope.mygrid.data = [];
     $scope.mygrid.enableColumnResizing = true;
     $scope.mygrid.enableFiltering = true;
     $scope.mygrid.enableGridMenu = true;
