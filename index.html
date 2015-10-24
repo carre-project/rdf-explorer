@@ -3,7 +3,7 @@
 
 <head>
     <base href="/rdf-explorer/">
-
+    
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-cookies.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js"></script>
@@ -23,7 +23,6 @@
         .ui-grid {
             height: 500px;
         }
-        
         .ui-grid-grid-footer {
             position: absolute;
             top: -25px;
@@ -52,11 +51,11 @@
                         <button type="button" class="btn btn-default" ng-click="instancesRequest(selectedType)">load Instance</button>
                     </uib-tab>
 
-                    <uib-tab heading="Sparql method" select="sparqlRequest(radioModel)" ng-show="user.username">
+                    <uib-tab heading="Sparql method" select="sparqlRequest(radioModel,limit)" ng-show="user.username">
                         <hr>
                         <div class="btn-group">
-                            <label ng-model="radioModel" uib-btn-radio="'private'" class="btn btn-default" ng-click="sparqlRequest(radioModel)">Private RDF</label>
-                            <label ng-model="radioModel" uib-btn-radio="'public'" class="btn btn-default" ng-click="sparqlRequest(radioModel)">Public RDF</label>
+                            <label ng-model="radioModel" uib-btn-radio="'private'" class="btn btn-default" ng-click="sparqlRequest(radioModel,limit)">Private RDF</label>
+                            <label ng-model="radioModel" uib-btn-radio="'public'" class="btn btn-default" ng-click="sparqlRequest(radioModel,limit)">Public RDF</label>
                         </div>
 
                         <label>Limit results
@@ -65,14 +64,11 @@
                     </uib-tab>
 
                 </uib-tabset>
-
             </div>
             <br>
             <br>
             <div cg-busy="dataLoad" id="grid1" ui-grid="mygrid" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns ui-grid-exporter ui-grid-grouping class="grid"></div>
-
         </div>
-
     </div>
 
 
