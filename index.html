@@ -6,13 +6,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-cookies.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js"></script>
-    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.3.js"></script>
     <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
     <script src="http://ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
     <script src="http://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
     <script src="http://ui-grid.info/release/ui-grid.js"></script>
     <script src="//rawgit.com/cgross/angular-busy/master/dist/angular-busy.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css">
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.3.js"></script>
     <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
     <link href="//rawgit.com/cgross/angular-busy/master/dist/angular-busy.css" rel="stylesheet">
     <link href="//rawgit.com/cgross/angular-busy/master/demo/gh-fork-ribbon.css" rel="stylesheet">
@@ -20,6 +20,12 @@
     <style type="text/css">
         .ui-grid {
             height: 600px;
+        }
+        
+        .ui-grid-grid-footer {
+            position: absolute;
+            top: -25px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -29,24 +35,22 @@
     <div ng-controller="MainCtrl">
         <div class="col-xs-12">
             <h1>CARRE RDF explorer</h1>
-            <div ng-if="user" class="alert alert-primary">
-                <h4>Hi {{user.username}}</h4>
+            <div class="alert alert-primary">
+                <h4 ng-show="user">Hi {{user.username}}</h4>
+                <h4 ng-show="!user">Hi, you are not logged in, login now or just explore the public rdf</h4>
 
                 <div class="btn-group">
-                    <label class="btn btn-primary" ng-model="radioModel" uib-btn-radio="'private'" class="btn btn-default" ng-click="sparqlRequest('private')">Private RDF</label>
-                    <label class="btn btn-primary" ng-model="radioModel" uib-btn-radio="'public'" class="btn btn-default" ng-click="sparqlRequest('public')">Public RDF</label>
+                    <label ng-disabled="!user" ng-model="radioModel" uib-btn-radio="'private'" class="btn btn-default" ng-click="sparqlRequest(radioModel)">Private RDF</label>
+                    <label ng-model="radioModel" uib-btn-radio="'public'" class="btn btn-default" ng-click="sparqlRequest(radioModel)">Public RDF</label>
                 </div>
+
+                <label>Limit results
+                    <input min="1" max="10000" ng-model-options="{debounce: 1000}" type="number" ng-change="sparqlRequest(radioModel)" ng-model="limit" class="form-control">
+                </label>
             </div>
-        </div>
+            <div cg-busy="dataLoad" id="grid1" ui-grid="mygrid" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns ui-grid-exporter ui-grid-grouping class="grid"></div>
 
-        <div ng-if="!user" class="alert alert-default">
-            <h4>Hi, you are not logged in, login now or just explore the public rdf</h4>
-            <button id="refreshButton" type="button" class="btn btn-default" ng-click="sparqlRequest()">Public RDF</button>
         </div>
-    </div>
-    <div cg-busy="dataLoad" id="grid1" ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns ui-grid-exporter ui-grid-grouping class="grid"></div>
-    </div>
-
 
     </div>
 
