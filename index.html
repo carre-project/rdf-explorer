@@ -41,7 +41,7 @@
 
                 <div ng-show="!user.username">
                     <div class="col-xs-12">
-                        <select name="singleSelect" style="width:300px; display:inline" class="form-control" ng-model="instancesType">
+                        <select name="singleSelect" style="width:300px; display:inline" class="form-control" ng-model="selectedType">
                             <option ng-repeat="option in instanceTypes" value="{{option}}">{{option}}</option>
                         </select>
                         <button id="refreshButton" type="button" class="btn btn-primary" ng-click="instancesRequest()">Refresh Data</button>

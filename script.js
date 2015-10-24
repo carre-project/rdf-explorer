@@ -58,6 +58,7 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
 
 
     /*------INSTANCES METHOD----------*/
+    
     $scope.instanceTypes = [
         'observable',
         'clinical_observable',
@@ -71,12 +72,13 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
         'risk_evidence',
         'citation'
     ];
+    $scope.selectedType= $scope.instanceTypes[0];
 
     $scope.instancesRequest = function() {
         console.log('Request using Instances method');
         //make request and assign the promise to a variable for loading features
-        $scope.dataLoad = $http.get(API, {
-            'type': $scope.instancesType
+        $scope.dataLoad = $http.get(API+'instances', {
+            'type': $scope.selectedType
         }).success(function(data) {
             console.log('Raw results: ', data);
 
