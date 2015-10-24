@@ -38,6 +38,17 @@
             <div class="alert alert-primary">
                 <h4 ng-show="user.username">Hi {{user.username}}</h4>
                 <h4 ng-show="!user.username">Hi, you are not logged in, <a href="">Login now</a></h4>
+
+                <div ng-show="!user.username">
+                    <div class="col-xs-12">
+                        <select name="singleSelect" style="width:300px; display:inline" class="form-control" ng-model="selectedType">
+                            <option ng-repeat="option in instanceTypes" value="{{option}}">{{option}}</option>
+                        </select>
+                        <button id="refreshButton" type="button" class="btn btn-primary" ng-click="instancesRequest()">Refresh Data</button>
+                    </div>
+
+                </div>
+
                 <div ng-show="user.username">
 
                     <div class="btn-group">
