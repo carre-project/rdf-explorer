@@ -16,8 +16,9 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
     var TOKEN = $scope.user.oauth_token;
     var USERGRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
     var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
-    var API = 'https://carre.kmi.open.ac.uk:443/ws/query';
+    var API = 'https://carre.kmi.open.ac.uk:443/ws/';
 
+    /*------SPARQL QUERY METHOD----------*/
     $scope.radioModel = 'public'; //set the default request to public
     $scope.limit = 100; //set the default limit to 100
 
@@ -32,7 +33,7 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
         //example sparql query
         var SPARQL = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object } LIMIT ' + $scope.limit;
         //make request and assign the promise to a variable for loading features
-        $scope.dataLoad = $http.post(API, {
+        $scope.dataLoad = $http.post(API + 'query', {
             'sparql': SPARQL,
             'token': TOKEN
         }).success(function(data) {
@@ -55,9 +56,24 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
 
     };
 
+
+    /*------INSTANCES METHOD----------*/
+    $scope.instanceTypes = [
+        'observable',
+        'clinical_observable',
+        'personal_observable',
+        'risk_element',
+        'biomedical_risk_element',
+        'behavioural_risk_element',
+        'genetic_risk_element',
+        'demographic_risk_element',
+        'risk_factor',
+        'risk_evidence',
+        'citation'
+    ];
+
     $scope.instancesRequest = function() {
         console.log('Request using Instances method');
-
         //make request and assign the promise to a variable for loading features
         $scope.dataLoad = $http.get(API, {
             'type': $scope.instancesType
@@ -81,16 +97,17 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
 
     };
 
+
+
+
     //initiate the default request
     if ($scope.user.username) {
         //if you have token do sparql request
-
         $scope.sparqlRequest($scope.radioModel);
     }
     else {
         //do the instances request
-        $scope.instancesRequest($scope.radioModel);
-
+        $scope.instancesRequest();
     }
 
 
