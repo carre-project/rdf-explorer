@@ -1,6 +1,8 @@
 var app = angular.module('app', ['ngAnimate', 'ngCookies', 'ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.grouping', 'ui.bootstrap']);
-
-app.controller('MainCtrl', function($cookies, $scope, $http, uiGridGroupingConstants, $location) {
+app.config(function($locationProvider) {
+  $locationProvider.html5Mode(true);
+})
+.controller('MainCtrl', function($cookies, $scope, $http, uiGridGroupingConstants, $location) {
 
     //get test user token
     var testUser = {
