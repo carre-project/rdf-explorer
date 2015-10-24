@@ -7,7 +7,7 @@ app.config(function($locationProvider) {
     //get test user token
     var testUser = {
         'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
-        'username': 'nporto'
+        'username': 'Test User'
     };
 
 
@@ -23,26 +23,26 @@ app.config(function($locationProvider) {
     // Retrieving a cookie and set initial user object
     $scope.user = $scope.cookie = $cookies.getObject('CARRE_USER') || testUser;
 
-    // Retrieving url params
-    var params = $location.search();
+    // // Retrieving url params
+    // var params = $location.search();
 
-    //check for cookie or url get parameters
-    if (params.login && params.username) {
-        delete params.login; //delete the extra param we put before
-        $scope.user = $scope.cookie = params; //set user object
-        $cookies.putObject('CARRE_USER', $scope.cookie, {
-            'domain': 'carre-project.eu'
-        }); //set browser cookie
-    }
-    else if (params.logout) {
-        $scope.user = $scope.cookie = null; //remove user object
-        $cookies.remove('CARRE_USER', {
-            'domain': 'carre-project.eu'
-        }); //remove browser cookie
-    }
+    // //check for cookie or url get parameters
+    // if (params.login && params.username) {
+    //     delete params.login; //delete the extra param we put before
+    //     $scope.user = $scope.cookie = params; //set user object
+    //     $cookies.putObject('CARRE_USER', $scope.cookie, {
+    //         'domain': 'carre-project.eu'
+    //     }); //set browser cookie
+    // }
+    // else if (params.logout) {
+    //     $scope.user = $scope.cookie = null; //remove user object
+    //     $cookies.remove('CARRE_USER', {
+    //         'domain': 'carre-project.eu'
+    //     }); //remove browser cookie
+    // }
 
-    //clean up the browser url
-    $location.url('/').replace();
+    // //clean up the browser url
+    // $location.url('/').replace();
 
 
     /*-----------end of authentication --------AUTH---------------*/
