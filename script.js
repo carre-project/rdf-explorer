@@ -4,7 +4,7 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
 
     $scope.user = {};
     //get test user token
-    var testUser={
+    var testUser = {
         'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
         'username': 'nporto'
     };
@@ -58,7 +58,7 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
 
 
     /*------INSTANCES METHOD----------*/
-    
+
     $scope.instanceTypes = [
         'observable',
         'clinical_observable',
@@ -72,13 +72,13 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
         'risk_evidence',
         'citation'
     ];
-    $scope.selectedType= $scope.instanceTypes[0];
+    $scope.selectedType = $scope.instanceTypes[0];
 
     $scope.instancesRequest = function() {
         console.log('Request using Instances method');
         //make request and assign the promise to a variable for loading features
-        $scope.dataLoad = $http.get(API+'instances?type='+$scope.selectedType).success(function(data) {
-            console.log('Raw results: ', data);
+        $scope.dataLoad = $http.get(API + 'instances?type=' + $scope.selectedType).success(function(data) {
+            // console.log('Raw results: ', data);
 
             //convert raw results to ui-grid compatible data using map function
             $scope.mygrid.data = data.map(function(obj) {
@@ -92,23 +92,13 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
 
                 return row;
             })
-            console.log('Filtered : ', $scope.mygrid.data);
+            // console.log('Filtered : ', $scope.mygrid.data);
         });
 
     };
 
 
 
-
-    //initiate the default request
-    if ($scope.user.username) {
-        //if you have token do sparql request
-        $scope.sparqlRequest($scope.radioModel);
-    }
-    else {
-        //do the instances request
-        $scope.instancesRequest();
-    }
 
 
 
