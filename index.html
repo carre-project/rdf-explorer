@@ -19,7 +19,7 @@
     <script src="script.js"></script>
     <style type="text/css">
         .ui-grid {
-            height: 600px;
+            height: 500px;
         }
         
         .ui-grid-grid-footer {
@@ -34,19 +34,22 @@
 
     <div ng-controller="MainCtrl">
         <div class="col-xs-12">
-            <h1>CARRE RDF explorer with SPARQL and INSTANCES method</h1>
-            <div class="alert alert-primary">
-                <h4 ng-show="user.username">Hi {{user.username}}</h4>
-                <h4 ng-show="!user.username">Hi, you are not logged in, <a href="">Login now</a></h4>
+            <div class="page-header">
+              <h1>CARRE RDF explorer 
+              
+                <small ng-show="user.username">Hi {{user.username}}</small>
+                <small ng-show="!user.username">Hi, you are not logged in, <a href="">Login now</a></small>
+            </div>
+            <div>
 
                 <uib-tabset type="pills">
 
-                    <uib-tab heading="Instances method" select="instancesRequest()">
+                    <uib-tab heading="Instances method" select="instancesRequest(selectedType)">
                         <hr>
                         <select name="singleSelect" style="width:300px; display:inline" class="form-control" ng-model="selectedType">
                             <option ng-repeat="option in instanceTypes" value="{{option}}">{{option}}</option>
                         </select>
-                        <button type="button" class="btn btn-default" ng-click="instancesRequest()">load Instance</button>
+                        <button type="button" class="btn btn-default" ng-click="instancesRequest(selectedType)">load Instance</button>
                     </uib-tab>
 
                     <uib-tab heading="Sparql method" select="sparqlRequest(radioModel)" ng-show="user.username">
@@ -64,6 +67,8 @@
                 </uib-tabset>
 
             </div>
+            <br>
+            <br>
             <div cg-busy="dataLoad" id="grid1" ui-grid="mygrid" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns ui-grid-exporter ui-grid-grouping class="grid"></div>
 
         </div>
