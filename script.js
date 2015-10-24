@@ -1,6 +1,6 @@
 var app = angular.module('app', ['ngAnimate', 'ngTouch', 'cgBusy', 'ngCookies', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.grouping', 'ui.bootstrap']);
 
-app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingConstants) {
+app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingConstants, $location) {
 
     $scope.user = {};
     //get test user token
@@ -10,13 +10,48 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
     };
     $scope.user = testUser;
 
-    // normally you would do something like this
-    // $scope.user = $cookieStore.get('CARRE_USER') || {};
+
+    /*-----Integration with the authentication example --------AUTH-----*/
+
+    //set up the urls 
+    var CARRE_DEVICES = 'http://devices.carre-project.eu/devices/accounts';
+    var baseUrl = $location.absUrl();
+    $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl + '?login'; //pass the login as a parameter to catch later
+    $scope.logoutUrl = CARRE_DEVICES + '/logout?next=' + baseUrl + '?logout'; //same for the logout
+
+
+    // Retrieving a cookie and set initial user object
+    $scope.user = $scope.cookie = $cookies.getObject('CARRE_USER');
+
+    // Retrieving url params
+    var params = $location.search();
+
+    //check for cookie or url get parameters
+    if (params.login && params.username) {
+        delete params.login; //delete the extra param we put before
+        $scope.user = $scope.cookie = params; //set user object
+        $cookies.putObject('CARRE_USER', $scope.cookie, {
+            'domain': 'carre-project.eu'
+        }); //set browser cookie
+    }
+    else if (params.logout) {
+        $scope.user = $scope.cookie = null; //remove user object
+        $cookies.remove('CARRE_USER', {
+            'domain': 'carre-project.eu'
+        }); //remove browser cookie
+    }
+
+    //clean up the browser url
+    $location.url('/').replace();
+
+
+
 
     var TOKEN = $scope.user.oauth_token;
     var USERGRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
     var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
     var API = 'https://carre.kmi.open.ac.uk:443/ws/';
+
 
     /*------SPARQL QUERY METHOD----------*/
     $scope.radioModel = 'public'; //set the default request to public
@@ -82,17 +117,17 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
 
             //convert raw results to ui-grid compatible data using map function
             $scope.mygrid.data = data.map(function(obj) {
-                var row = {};
-                row.predicate = obj.predicate;
-                row.subject = obj.subject;
-                row.object = obj.object;
-                row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
-                row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
-                row.object_pretty = row.object.substring(row.object.lastIndexOf('/') + 1);
+                    var row = {};
+                    row.predicate = obj.predicate;
+                    row.subject = obj.subject;
+                    row.object = obj.object;
+                    row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
+                    row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
+                    row.object_pretty = row.object.substring(row.object.lastIndexOf('/') + 1);
 
-                return row;
-            })
-            // console.log('Filtered : ', $scope.mygrid.data);
+                    return row;
+                })
+                // console.log('Filtered : ', $scope.mygrid.data);
         });
 
     };
