@@ -77,9 +77,7 @@ app.controller('MainCtrl', function($cookieStore, $scope, $http, uiGridGroupingC
     $scope.instancesRequest = function() {
         console.log('Request using Instances method');
         //make request and assign the promise to a variable for loading features
-        $scope.dataLoad = $http.get(API+'instances', {
-            'type': $scope.selectedType
-        }).success(function(data) {
+        $scope.dataLoad = $http.get(API+'instances?type='+$scope.selectedType).success(function(data) {
             console.log('Raw results: ', data);
 
             //convert raw results to ui-grid compatible data using map function
