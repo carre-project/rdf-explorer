@@ -82,7 +82,7 @@ app.config(function($locationProvider) {
                         row.object = obj.object.value;
                         row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
                         row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
-                        row.object_pretty = row.object.substring(row.object.lastIndexOf('/') + 1);
+                        row.object_pretty = obj.object.value;
 
                         return row;
                     })
@@ -122,7 +122,7 @@ app.config(function($locationProvider) {
                         row.object = obj.object;
                         row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
                         row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
-                        row.object_pretty = row.object.substring(row.object.lastIndexOf('/') + 1);
+                        row.object_pretty = obj.object;
                         return row;
                     })
                     // console.log('Filtered : ', $scope.mygrid.data);
