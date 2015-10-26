@@ -6,8 +6,8 @@ app.config(function($locationProvider) {
 
         //get test user token
         var testUser = {
-            // 'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
-            // 'username': 'Test User'
+            'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
+            'username': 'nporto'
         };
 
 
