@@ -56,8 +56,9 @@ app.config(function($locationProvider) {
         /*------SPARQL QUERY METHOD----------*/
         $scope.radioModel = 'public'; //set the default request to public
         $scope.limit = 100; //set the default limit to 100
+        $scope.sparqlquery = '';
 
-        $scope.sparqlRequest = function(type, limit) {
+        $scope.sparqlRequest = function(type, limit, subjectFilter, predicateFilter, objectFilter) {
             console.log('Request using SPARQL query method');
 
             $scope.radioModel = type;
@@ -65,8 +66,20 @@ app.config(function($locationProvider) {
             if (type === 'private' && TOKEN) {
                 GRAPH = USERGRAPH;
             }
+
+            //build string filters
+            var FiltersArray=[];
+            var SparqlFilters='';
+            if(subjectFilter) FiltersArray.push('regex(str(?subject),"' + subjectFilter + '","i")');
+            if(predicateFilter) FiltersArray.push('regex(str(?predicate),"' + predicateFilter + '","i")');
+            if(objectFilter) FiltersArray.push('regex(str(?object),"' + objectFilter + '","i")');
+            if(FiltersArray.length>0){
+                SparqlFilters='FILTER ( '+FiltersArray.join(' && ')+' )';
+            }
             //example sparql query
-            var SPARQL = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object } LIMIT ' + (limit || $scope.limit);
+            var SPARQL = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object. ' + SparqlFilters + ' } LIMIT ' + (limit || $scope.limit);
+            console.log('Sparql query: ' + SPARQL);
+
             //make request and assign the promise to a variable for loading features
             $scope.dataLoad = $http.post(API + 'query', {
                 'sparql': SPARQL,
@@ -161,6 +174,9 @@ app.config(function($locationProvider) {
             enableCellEdit: true,
             cellTooltip: function(row, col) {
                 return row.entity.predicate;
+            },
+            grouping: {
+                groupPriority: 1
             }
         }, {
             name: 'object_pretty',

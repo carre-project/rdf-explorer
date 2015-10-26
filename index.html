@@ -3,7 +3,7 @@
 
 <head>
     <base href="/rdf-explorer/">
-    
+
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-cookies.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js"></script>
@@ -23,6 +23,7 @@
         .ui-grid {
             height: 700px;
         }
+        
         .ui-grid-grid-footer {
             position: absolute;
             top: -25px;
@@ -61,6 +62,18 @@
                         <label>Limit results
                             <input min="1" max="10000" ng-model-options="{debounce: 1000}" type="number" ng-change="sparqlRequest(radioModel,limit)" ng-model="limit" class="form-control">
                         </label>
+                        <div class="form-inline" style="display:inline">
+                            <div class="form-group">
+                            <input style="display:inline" type="text" ng-model="subjectFilter" placeholder="Subject Filter" class="form-control">
+                            </div>
+                            <div class="form-group">
+                            <input style="display:inline" type="text" ng-model="predicateFilter" placeholder="Predicate Filter" class="form-control">
+                            </div>
+                            <div class="form-group">
+                            <input style="display:inline" type="text" ng-model="objectFilter" placeholder="Object Filter" class="form-control">
+                            </div>
+                            <button type="button" ng-click="sparqlRequest(radioModel,limit,subjectFilter,predicateFilter,objectFilter)" class="btn btn-default">Apply Filters</button>
+                        </div>
                     </uib-tab>
 
                 </uib-tabset>
