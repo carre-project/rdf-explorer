@@ -2,7 +2,7 @@ var app = angular.module('CarreExample', ['ngAnimate', 'ngTouch', 'cgBusy', 'ngC
 app.config(function($locationProvider) {
         $locationProvider.html5Mode(true);
     })
-    .controller('MainCtrl', function($cookies, $scope, $http, uiGridGroupingConstants, $location) {
+    .controller('MainCtrl', function($scope, $cookies, $http, uiGridGroupingConstants, $location) {
 
         //get test user token
         var testUser = {
@@ -54,35 +54,43 @@ app.config(function($locationProvider) {
 
 
         /*------SPARQL QUERY METHOD----------*/
-        $scope.radioModel = 'public'; //set the default request to public
-        $scope.limit = 100; //set the default limit to 100
-        $scope.sparqlquery = '';
+        $scope.sparql={
+            rdfGraph:'public', //set the default request to public
+            limit:100, //set the default limit to 100
+            subjectFilter:'',
+            predicateFilter:'',
+            objectFilter:'',
+            time:0.00,
+            query:'',
+            
+        }
 
-        $scope.sparqlRequest = function(type, limit, subjectFilter, predicateFilter, objectFilter) {
+        $scope.sparqlRequest = function() {
             console.log('Request using SPARQL query method');
-
-            $scope.radioModel = type;
+            var start = new Date().getTime(); //count the time for each request;
+            
+        
             var GRAPH = PUBLICGRAPH;
-            if (type === 'private' && TOKEN) {
+            if ($scope.sparql.rdfGraph === 'private' && TOKEN) {
                 GRAPH = USERGRAPH;
             }
 
             //build string filters
             var FiltersArray=[];
             var SparqlFilters='';
-            if(subjectFilter) FiltersArray.push('regex(str(?subject),"' + subjectFilter + '","i")');
-            if(predicateFilter) FiltersArray.push('regex(str(?predicate),"' + predicateFilter + '","i")');
-            if(objectFilter) FiltersArray.push('regex(str(?object),"' + objectFilter + '","i")');
+            if($scope.sparql.subjectFilter) FiltersArray.push('regex(str(?subject),"' + $scope.sparql.subjectFilter + '","i")');
+            if($scope.sparql.predicateFilter) FiltersArray.push('regex(str(?predicate),"' + $scope.sparql.predicateFilter + '","i")');
+            if($scope.sparql.objectFilter) FiltersArray.push('regex(str(?object),"' + $scope.sparql.objectFilter + '","i")');
             if(FiltersArray.length>0){
                 SparqlFilters='FILTER ( '+FiltersArray.join(' && ')+' )';
             }
             //example sparql query
-            var SPARQL = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object. ' + SparqlFilters + ' } LIMIT ' + (limit || $scope.limit);
-            console.log('Sparql query: ' + SPARQL);
+            $scope.sparql.query = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object. ' + SparqlFilters + ' } LIMIT ' + ($scope.sparql.limit);
+            console.log('Sparql query: ',$scope.sparql.query);
 
             //make request and assign the promise to a variable for loading features
             $scope.dataLoad = $http.post(API + 'query', {
-                'sparql': SPARQL,
+                'sparql': $scope.sparql.query,
                 'token': TOKEN
             }).success(function(data) {
                 // console.log('Raw results: ', data);
@@ -100,6 +108,9 @@ app.config(function($locationProvider) {
                         return row;
                     })
                     // console.log('Filtered : ', $scope.mygrid.data);
+                var end=new Date().getTime();
+                $scope.sparql.time=Math.round((end-start)/1000 * 100) / 100;
+                console.log($scope.sparql.time);
             });
 
         };
