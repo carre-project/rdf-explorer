@@ -2,7 +2,7 @@ var app = angular.module('CarreExample', ['ngAnimate', 'ngTouch', 'cgBusy', 'ngC
 app.config(function($locationProvider) {
         $locationProvider.html5Mode(true);
     })
-    .controller('MainCtrl', function($scope, $cookies, $http, uiGridGroupingConstants, $location) {
+    .controller('MainCtrl', function($scope, $cookies, $http, uiGridGroupingConstants, $location,Bioportal) {
 
         //get test user token
         var testUser = {
@@ -61,20 +61,16 @@ app.config(function($locationProvider) {
             predicateFilter:'',
             objectFilter:'',
             time:0.00,
-            query:'',
-            
+            query:''
         }
-
         $scope.sparqlRequest = function() {
             console.log('Request using SPARQL query method');
             var start = new Date().getTime(); //count the time for each request;
-            
         
             var GRAPH = PUBLICGRAPH;
             if ($scope.sparql.rdfGraph === 'private' && TOKEN) {
                 GRAPH = USERGRAPH;
             }
-
             //build string filters
             var FiltersArray=[];
             var SparqlFilters='';
@@ -86,15 +82,13 @@ app.config(function($locationProvider) {
             }
             //example sparql query
             $scope.sparql.query = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object. ' + SparqlFilters + ' } LIMIT ' + ($scope.sparql.limit);
-            console.log('Sparql query: ',$scope.sparql.query);
-
+            // console.log('Sparql query: ',$scope.sparql.query);
             //make request and assign the promise to a variable for loading features
             $scope.dataLoad = $http.post(API + 'query', {
                 'sparql': $scope.sparql.query,
                 'token': TOKEN
             }).success(function(data) {
                 // console.log('Raw results: ', data);
-
                 //convert raw results to ui-grid compatible data using map function
                 $scope.mygrid.data = data.map(function(obj) {
                         var row = {};
@@ -104,15 +98,22 @@ app.config(function($locationProvider) {
                         row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
                         row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
                         row.object_pretty = obj.object.value;
-
                         return row;
                     })
                     // console.log('Filtered : ', $scope.mygrid.data);
                 var end=new Date().getTime();
                 $scope.sparql.time=Math.round((end-start)/1000 * 100) / 100;
-                console.log($scope.sparql.time);
+                // console.log($scope.sparql.time);
             });
+        };
 
+        /* Autocomplete sparql filters from bioportal CARRE ontologies : Educational, Lifestyle, Risk Factors*/
+        $scope.getCARREterms=function(val){
+            return Bioportal(val,{'also_search_properties':true,'ontologies':'MERA,MWLA,CARRE','suggest':true}).then(function(response){
+              return response.data.collection.map(function(obj){
+                return (obj.prefLabel.indexOf('#')>-1)?obj.prefLabel.split('#')[1]:obj.prefLabel;
+                });
+            });
         };
 
 
@@ -136,7 +137,7 @@ app.config(function($locationProvider) {
             console.log('Request using Instances method');
             //make request and assign the promise to a variable for loading features
             $scope.dataLoad = $http.get(API + 'instances?type=' + type).success(function(data) {
-                console.log('Raw results: ', data[0]);
+                // console.log('Raw results: ', data[0]);
 
                 //convert raw results to ui-grid compatible data using map function
                 $scope.mygrid.data = data.map(function(obj) {
@@ -148,15 +149,11 @@ app.config(function($locationProvider) {
                         row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
                         row.object_pretty = obj.object;
                         return row;
-                    })
+                    });
                     // console.log('Filtered : ', $scope.mygrid.data);
             });
 
         };
-
-
-
-
 
 
         /* GRID STUFF */
@@ -185,9 +182,6 @@ app.config(function($locationProvider) {
             enableCellEdit: true,
             cellTooltip: function(row, col) {
                 return row.entity.predicate;
-            },
-            grouping: {
-                groupPriority: 1
             }
         }, {
             name: 'object_pretty',
@@ -201,4 +195,29 @@ app.config(function($locationProvider) {
         /*End of Grid stuff*/
 
 
-    });
+    })
+    .service('Bioportal', function($http) {
+
+  var apikey= 'a15281a9-d87d-4c0f-b7aa-31debe0f6449'; //you should get your own API key! it's free
+  var apiurl = 'http://data.bioontology.org/search';
+
+  //autocomplete fetch from bioportal
+  return function(search,options) {
+    return $http.get(
+        apiurl
+        +(options.include?'?include='+options.include:'?include=prefLabel')
+        +(options.display_context?'&display_context=true':'&display_context=false')
+        +(options.also_search_properties?'&also_search_properties=true':'&also_search_properties=false')
+        +'&pagesize='+(!!options.pagesize?options.pagesize:'20')
+        +(options.semantic_types?'&semantic_types='+options.semantic_types:'')
+        +(options.cui?'&cui='+options.cui:'')
+        +(options.subtree?'&ontology='+options.subtree:'')
+        +(options.display_links?'&display_links=true':'&display_links=false')
+        +(options.suggest?'&suggest=true':'&suggest=false')
+        +(options.ontologies?'&ontologies='+options.ontologies:'&ontologies=ICD10,SNOMEDCT')
+        +'&q='+search
+        +'&apikey='+apikey
+    );
+  };
+
+});
