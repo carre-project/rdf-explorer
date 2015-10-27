@@ -111,7 +111,7 @@ app.config(function($locationProvider) {
         $scope.getCARREterms=function(val){
             return Bioportal(val,{'also_search_properties':true,'ontologies':'MERA,MWLA,CARRE','suggest':true}).then(function(response){
               return response.data.collection.map(function(obj){
-                return (obj.prefLabel.indexOf('#')>-1)?obj.prefLabel.split('#')[1]:obj.prefLabel;
+                return obj.prefLabel;
                 });
             });
         };
