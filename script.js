@@ -4,55 +4,38 @@ app.config(function($locationProvider) {
     })
     .controller('MainCtrl', function($scope, $cookies, $http, uiGridGroupingConstants, $location,Bioportal) {
 
-        //get test user token
-        var testUser = {
-            'oauth_token': '0213be219dc1821eb2f7b0bbc7c8a6cbe3c3559b',
-            'username': 'nporto'
-        };
+        var API = 'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk:443/ws/'; // http://carre.kmi.open.ac.uk:443/ws/
+        var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
 
 
-        /*-----Integration with the authentication example --------AUTH-----*/
-
+        /*-----Integration with the authentication example ------------*/
+        // Retrieving a cookie and set initial user object
+        var TOKEN = $cookies.get('CARRE_USER') || '';   
         //set up the urls 
         var CARRE_DEVICES = 'http://devices.carre-project.eu/devices/accounts';
         var baseUrl = $location.absUrl();
         $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl;
         $scope.logoutUrl = CARRE_DEVICES + '/logout?next=' + baseUrl;
 
-
-        // Retrieving a cookie and set initial user object
-        $scope.user = $scope.cookie = $cookies.getObject('CARRE_USER') || testUser;
-
-        // // Retrieving url params
-        // var params = $location.search();
-
-        // //check for cookie or url get parameters
-        // if (params.login && params.username) {
-        //     delete params.login; //delete the extra param we put before
-        //     $scope.user = $scope.cookie = params; //set user object
-        //     $cookies.putObject('CARRE_USER', $scope.cookie, {
-        //         'domain': 'carre-project.eu'
-        //     }); //set browser cookie
-        // }
-        // else if (params.logout) {
-        //     $scope.user = $scope.cookie = null; //remove user object
-        //     $cookies.remove('CARRE_USER', {
-        //         'domain': 'carre-project.eu'
-        //     }); //remove browser cookie
-        // }
-
-        // //clean up the browser url
-        // $location.url('/').replace();
-
-
-        /*-----------end of authentication --------AUTH---------------*/
-
-        var TOKEN = $scope.user.oauth_token;
-        var USERGRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
-        var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
-        var API = 'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk:443/ws/'; // http://carre.kmi.open.ac.uk:443/ws/
-
-
+        //validate cookie token with userProfile api function and get username userGraph
+        if(TOKEN.length>0) {
+            $http.get(API+'userProfile?token='+TOKEN).then(function(res){
+                $scope.user={
+                    oauth_token:TOKEN,
+                    username:res.data.username,
+                    email:res.data.email
+                };
+            },function(err){
+                $scope.user = {};
+                console.log(err);
+            });
+        } else {
+            $scope.user = {};
+            TOKEN = '';
+        }
+        /*-----------end of authentication -----------------------*/
+        
+        
         /*------SPARQL QUERY METHOD----------*/
         $scope.sparql={
             rdfGraph:'public', //set the default request to public
@@ -68,8 +51,8 @@ app.config(function($locationProvider) {
             var start = new Date().getTime(); //count the time for each request;
         
             var GRAPH = PUBLICGRAPH;
-            if ($scope.sparql.rdfGraph === 'private' && TOKEN) {
-                GRAPH = USERGRAPH;
+            if ($scope.sparql.rdfGraph === 'private' && $scope.user) {
+                GRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
             }
             //build string filters
             var FiltersArray=[];
