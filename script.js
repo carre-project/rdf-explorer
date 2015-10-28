@@ -4,18 +4,22 @@ app.config(function($locationProvider) {
     })
     .controller('MainCtrl', function($scope, $cookies, $http, uiGridGroupingConstants, $location,Bioportal) {
 
+        //clean up the browser url
+        $location.url('/').replace();
+        var baseUrl = $location.absUrl();
+        
+        //set up the urls 
         var API = 'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk:443/ws/'; // http://carre.kmi.open.ac.uk:443/ws/
         var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
+        var CARRE_DEVICES = 'http://devices.carre-project.eu/devices/accounts';
+        $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl;
+        $scope.logoutUrl = CARRE_DEVICES + '/logout?next=' + baseUrl;
 
         /*-----Integration with the authentication example ------------*/
         
         // Retrieving a cookie and set initial user object
-        var TOKEN = $cookies.get('CARRE_USER') || '';   
-        //set up the urls 
-        var CARRE_DEVICES = 'http://devices.carre-project.eu/devices/accounts';
-        var baseUrl = $location.absUrl();
-        $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl;
-        $scope.logoutUrl = CARRE_DEVICES + '/logout?next=' + baseUrl;
+        var TOKEN = $cookies.get('CARRE_USER') || '';
+        $scope.user={};
 
         //validate cookie token with userProfile api function and get username userGraph
         if(TOKEN.length>0) {
@@ -29,9 +33,6 @@ app.config(function($locationProvider) {
                 $scope.user = {};
                 console.log(err);
             });
-        } else {
-            $scope.user = {};
-            TOKEN = '';
         }
         
         /*-----------end of authentication -----------------------*/

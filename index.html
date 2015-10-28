@@ -43,7 +43,7 @@
             <div class="page-header">
                 <h1>CARRE RDF explorer 
                 <small ng-show="user.username">Hi {{user.username}}, <a ng-href="{{logoutUrl}}">Logout</a></small>
-                <small ng-show="!user.username">Hello guest, please <a ng-href="{{loginUrl}}">Login</a></small>
+                <small ng-hide="user.username">Hello guest, please <a ng-href="{{loginUrl}}">Login</a></small>
             </div>
             <div>
                 <uib-tabset type="pills">
