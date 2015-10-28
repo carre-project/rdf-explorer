@@ -29,6 +29,10 @@
             top: -25px;
             font-weight: bold;
         }
+        .tooltip-inner {
+            background:none;
+            /*background-color: #fff;*/
+        }
     </style>
 </head>
 
@@ -79,7 +83,7 @@
                                 uib-typeahead="item for item in getCARREterms($viewValue)" typeahead-wait-ms="100" class="form-control">
                             </div>
                             <button type="button" ng-click="sparqlRequest()" class="btn btn-danger">Refresh</button>                            
-                            <a uib-popover="{{sparql.query}}" popover-placement="left" popover-title="Sparql Query" class="btn btn-info">Show SPARQL query</a>
+                            <a uib-tooltip-template="'SparqlQueryTooltipTemplate.html'" placement="left" tooltip-trigger="click" class="btn btn-info">SPARQL query</a>
 
                         </div>
                     </uib-tab>
@@ -96,3 +100,15 @@
 </body>
 
 </html>
+<script type="text/ng-template" id="SparqlQueryTooltipTemplate.html">
+<div class="panel panel-info" style="width: 500px;position: relative;right: 300px;top: 20px; background:white;">
+  <div class="panel-heading">
+    <h3 class="panel-title">Sparql Query</h3>
+  </div>
+  <div class="panel-body">
+    <pre>{{sparql.query}}</pre>
+    
+    <a ng-href="http://carre.kmi.open.ac.uk:8890/sparql?query={{sparql.query}}&format=json" target="_blank">Run on Sparql Endpoint</a>
+  </div>
+</div>
+</script>
