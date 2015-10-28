@@ -7,8 +7,8 @@ app.config(function($locationProvider) {
         var API = 'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk:443/ws/'; // http://carre.kmi.open.ac.uk:443/ws/
         var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
 
-
         /*-----Integration with the authentication example ------------*/
+        
         // Retrieving a cookie and set initial user object
         var TOKEN = $cookies.get('CARRE_USER') || '';   
         //set up the urls 
@@ -33,6 +33,7 @@ app.config(function($locationProvider) {
             $scope.user = {};
             TOKEN = '';
         }
+        
         /*-----------end of authentication -----------------------*/
         
         
