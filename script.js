@@ -46,8 +46,21 @@ app.config(function($locationProvider) {
             predicateFilter:'',
             objectFilter:'',
             time:0.00,
-            query:''
+            query:'',
+            extraPatterns: ''//'?subject rdf:type risk:risk_element.'
         }
+        
+        $scope.sparqlPrefixes= [
+            "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+            "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+            "PREFIX sensors: <http://carre.kmi.open.ac.uk/ontology/sensors.owl#>",
+            "PREFIX risk: <http://carre.kmi.open.ac.uk/ontology/risk.owl#>",
+            "PREFIX carreManufacturer: <http://carre.kmi.open.ac.uk/manufacturers/>",
+            "PREFIX carreUsers: <https://carre.kmi.open.ac.uk/users/>",
+            "PREFIX educational: <http://carre.kmi.open.ac.uk/ontology/educational.owl#>",
+            "PREFIX lifestyle: <http://carre.kmi.open.ac.uk/ontology/lifestyle.owl#>"
+            ];
         $scope.sparqlRequest = function() {
             console.log('Request using SPARQL query method');
             var start = new Date().getTime(); //count the time for each request;
@@ -63,28 +76,29 @@ app.config(function($locationProvider) {
             if($scope.sparql.predicateFilter) FiltersArray.push('regex(str(?predicate),"' + $scope.sparql.predicateFilter + '","i")');
             if($scope.sparql.objectFilter) FiltersArray.push('regex(str(?object),"' + $scope.sparql.objectFilter + '","i")');
             if(FiltersArray.length>0){
-                SparqlFilters='FILTER ( '+FiltersArray.join(' && ')+' )';
+                SparqlFilters=' FILTER ( '+FiltersArray.join(' && ')+' )';
             }
             //example sparql query
-            $scope.sparql.query = 'SELECT * FROM ' + GRAPH + ' WHERE { ?subject ?predicate ?object. ' + SparqlFilters + ' } LIMIT ' + ($scope.sparql.limit);
-            // console.log('Sparql query: ',$scope.sparql.query);
+            $scope.sparql.query = "SELECT * FROM " + GRAPH + " WHERE { ?subject ?predicate ?object. "+$scope.sparql.extraPatterns+ SparqlFilters + "} LIMIT " + ($scope.sparql.limit);
+            $scope.finalQuery = $scope.sparqlPrefixes.join("\n")+"\n"+$scope.sparql.query;
+            console.log('Sparql query: ',$scope.finalQuery);
             //make request and assign the promise to a variable for loading features
             $scope.dataLoad = $http.post(API + 'query', {
-                'sparql': $scope.sparql.query,
+                'sparql': $scope.finalQuery,
                 'token': TOKEN
             }).success(function(data) {
                 // console.log('Raw results: ', data);
                 //convert raw results to ui-grid compatible data using map function
                 $scope.mygrid.data = data.map(function(obj) {
-                        var row = {};
-                        row.predicate = obj.predicate.value;
-                        row.subject = obj.subject.value;
-                        row.object = obj.object.value;
-                        row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
-                        row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
-                        row.object_pretty = obj.object.value;
-                        return row;
-                    })
+                    var row = {};
+                    row.predicate = obj.predicate.value;
+                    row.subject = obj.subject.value;
+                    row.object = obj.object.value;
+                    row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
+                    row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
+                    row.object_pretty = obj.object.value;
+                    return row;
+                })
                     // console.log('Filtered : ', $scope.mygrid.data);
                 var end=new Date().getTime();
                 $scope.sparql.time=Math.round((end-start)/1000 * 100) / 100;

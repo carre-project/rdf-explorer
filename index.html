@@ -83,7 +83,8 @@
                                 uib-typeahead="item for item in getCARREterms($viewValue)" typeahead-wait-ms="100" class="form-control">
                             </div>
                             <button type="button" ng-click="sparqlRequest()" class="btn btn-danger">Refresh</button>                            
-                            <a uib-tooltip-template="'SparqlQueryTooltipTemplate.html'" placement="left" tooltip-trigger="click" class="btn btn-info">SPARQL query</a>
+                            <a uib-tooltip-template="'SparqlQueryTooltipTemplate.html'" placement="left" tooltip-trigger="click" class="btn btn-info">Extra Patterns</a>
+                            <a uib-tooltip-template="'SparqlPrefixesTooltipTemplate.html'" placement="left" tooltip-trigger="click" class="btn btn-warning">Available Prefixes</a>
 
                         </div>
                     </uib-tab>
@@ -106,9 +107,18 @@
     <h3 class="panel-title">Sparql Query</h3>
   </div>
   <div class="panel-body">
-    <pre>{{sparql.query}}</pre>
+  
+    <textarea ng-model="sparql.extraPatterns" style="width:100%" class="form-control"></textarea>
     
-    <a ng-href="http://carre.kmi.open.ac.uk:8890/sparql?qtxt={{sparql.query}}" target="_blank">Run on Sparql Endpoint</a>
+  </div>
+</div>
+</script>
+<script type="text/ng-template" id="SparqlPrefixesTooltipTemplate.html">
+<div class="panel panel-warning" style="width: 500px;position: relative;right: 300px;top: 20px; color:black;background:white;">
+  <div class="panel-body">
+    <ul>
+    <li style="text-align: left;" ng-repeat="prefix in sparqlPrefixes">{{prefix}}</li>
+    </ul>
   </div>
 </div>
 </script>
