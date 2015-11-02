@@ -9,7 +9,7 @@ app.config(function($locationProvider) {
         var baseUrl = $location.absUrl();
         
         //set up the urls 
-        var API = 'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk:443/ws/'; // http://carre.kmi.open.ac.uk:443/ws/
+        var API =  'http://devices.carre-project.eu:443/ws/'; //'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk:443/ws/';
         var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
         var CARRE_DEVICES = 'http://devices.carre-project.eu/devices/accounts';
         $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl;
