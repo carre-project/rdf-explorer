@@ -198,7 +198,7 @@ app.config(function($locationProvider) {
     .service('Bioportal', function($http) {
 
   var apikey= 'a15281a9-d87d-4c0f-b7aa-31debe0f6449'; //you should get your own API key! it's free
-  var apiurl = 'http://data.bioontology.org/search';
+  var apiurl = 'https://data.bioontology.org/search';
 
   //autocomplete fetch from bioportal
   return function(search,options) {
