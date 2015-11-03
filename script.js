@@ -9,7 +9,7 @@ app.config(function($locationProvider) {
         var baseUrl = $location.absUrl();
         
         //set up the urls 
-        var API =  'http://devices.carre-project.eu:443/ws/'; //'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk:443/ws/';
+        var API =  'http://devices.carre-project.eu/ws/'; //'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk/ws/';
         var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
         var CARRE_DEVICES = 'http://devices.carre-project.eu/devices/accounts';
         $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl;
@@ -41,13 +41,13 @@ app.config(function($locationProvider) {
         /*------SPARQL QUERY METHOD----------*/
         $scope.sparql={
             rdfGraph:'public', //set the default request to public
-            limit:100, //set the default limit to 100
+            limit:1000, //set the default limit to 1000
             subjectFilter:'',
             predicateFilter:'',
             objectFilter:'',
             time:0.00,
             query:'',
-            extraPatterns: ''//'?subject rdf:type risk:risk_element.'
+            extraPatterns: "# e.g ?subject a risk:risk_element \n"
         }
         
         $scope.sparqlPrefixes= [
