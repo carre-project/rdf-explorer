@@ -10,7 +10,7 @@ app.config(function($locationProvider) {
         
         //set up the urls 
         var API =  'http://devices.carre-project.eu/ws/'; //'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk/ws/';
-        var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/riskdata>';
+        var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/beta>';
         var CARRE_DEVICES = 'http://devices.carre-project.eu/devices/accounts';
         $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl;
         $scope.logoutUrl = CARRE_DEVICES + '/logout?next=' + baseUrl;
@@ -72,14 +72,14 @@ app.config(function($locationProvider) {
             //build string filters
             var FiltersArray=[];
             var SparqlFilters='';
-            if($scope.sparql.subjectFilter) FiltersArray.push('regex(str(?subject),"' + $scope.sparql.subjectFilter + '","i")');
-            if($scope.sparql.predicateFilter) FiltersArray.push('regex(str(?predicate),"' + $scope.sparql.predicateFilter + '","i")');
-            if($scope.sparql.objectFilter) FiltersArray.push('regex(str(?object),"' + $scope.sparql.objectFilter + '","i")');
+            // if($scope.sparql.subjectFilter) FiltersArray.push('regex(str(?subject),"' + $scope.sparql.subjectFilter + '","i")');
+            // if($scope.sparql.predicateFilter) FiltersArray.push('regex(str(?predicate),"' + $scope.sparql.predicateFilter + '","i")');
+            // if($scope.sparql.objectFilter) FiltersArray.push('regex(str(?object),"' + $scope.sparql.objectFilter + '","i")');
             if(FiltersArray.length>0){
                 SparqlFilters=' FILTER ( '+FiltersArray.join(' && ')+' )';
             }
             //example sparql query
-            $scope.sparql.query = "SELECT * FROM " + GRAPH + " WHERE { ?subject ?predicate ?object. "+$scope.sparql.extraPatterns+ SparqlFilters + "} LIMIT " + ($scope.sparql.limit);
+            $scope.sparql.query = "SELECT * FROM " + GRAPH + " WHERE { "+($scope.sparql.extraPatterns||" ?subject ?predicate ?object. ")+ SparqlFilters + "} LIMIT " + ($scope.sparql.limit);
             $scope.finalQuery = $scope.sparqlPrefixes.join("\n")+"\n"+$scope.sparql.query;
             console.log('Sparql query: ',$scope.finalQuery);
             //make request and assign the promise to a variable for loading features
@@ -89,16 +89,24 @@ app.config(function($locationProvider) {
             }).success(function(data) {
                 console.log('Raw results: ', data);
                 //convert raw results to ui-grid compatible data using map function
-                $scope.mygrid.data = data.map(function(obj) {
+                $scope.mygrid.data = [];
+                $scope.mygrid.columnDefs = [];
+                var props=[];
+                
+                var tabledata = data.map(function(obj) {
                     var row = {};
-                    row.predicate = obj.predicate.value;
-                    row.subject = obj.subject.value;
-                    row.object = obj.object.value;
-                    row.predicate_pretty = row.predicate.substring(row.predicate.lastIndexOf('/') + 1);
-                    row.subject_pretty = row.subject.substring(row.subject.lastIndexOf('/') + 1);
-                    row.object_pretty = obj.object.value;
+                    for (var prop in obj) {
+                        if(!row[prop]) {
+                            if(props.indexOf(prop)===-1) props.push(prop);
+                            row[prop] = obj[prop].value;
+                        }
+                    }
+                    
                     return row;
                 })
+                $scope.defineColumns(props);
+                // $scope.mygrid.columnDefs=
+                $scope.mygrid.data = tabledata;
                     // console.log('Filtered : ', $scope.mygrid.data);
                 var end=new Date().getTime();
                 $scope.sparql.time=Math.round((end-start)/1000 * 100) / 100;
@@ -114,6 +122,20 @@ app.config(function($locationProvider) {
                 });
             });
         };
+        
+        $scope.defineColumns=function(propsArray){
+            console.log(propsArray);
+            propsArray.forEach(function(prop){
+                $scope.mygrid.columnDefs.push(
+                    {
+                        name: prop,
+                        displayName: prop.charAt(0).toUpperCase() + prop.slice(1),
+                        enableCellEdit: true,
+                    }
+                );
+            });
+            $scope.mygrid.columnDefs[0].grouping={ groupPriority: 0 }
+        }
 
 
         /*------INSTANCES METHOD----------*/
@@ -165,30 +187,19 @@ app.config(function($locationProvider) {
         $scope.mygrid.showGridFooter = true;
         $scope.mygrid.showColumnFooter = true;
         $scope.mygrid.fastWatch = true;
-        $scope.mygrid.columnDefs = [{
-            name: 'subject_pretty',
+        $scope.mygrid.columnDefs = [
+            {
+            name: 'subject',
             displayName: 'Subject',
             enableCellEdit: true,
-            cellTooltip: function(row, col) {
-                return row.entity.subject;
-            },
-            grouping: {
-                groupPriority: 0
-            }
         }, {
-            name: 'predicate_pretty',
+            name: 'predicate',
             displayName: 'Predicate',
-            enableCellEdit: true,
-            cellTooltip: function(row, col) {
-                return row.entity.predicate;
-            }
+            enableCellEdit: true
         }, {
-            name: 'object_pretty',
+            name: 'object',
             displayName: 'Object',
-            enableCellEdit: true,
-            cellTooltip: function(row, col) {
-                return row.entity.object;
-            }
+            enableCellEdit: true
         }];
 
         /*End of Grid stuff*/
