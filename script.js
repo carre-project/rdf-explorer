@@ -5,15 +5,27 @@ app.config(function($locationProvider) {
     .controller('MainCtrl', function($scope, $cookies, $http, uiGridGroupingConstants, $location,Bioportal) {
 
         //clean up the browser url
+        $scope.deployment = $location.search().deployment || 'devices.duth';
         $location.url('/').replace();
         var baseUrl = $location.absUrl();
-        
         //set up the urls 
-        var API =  'https://devices.carre-project.eu/ws/'; //'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk/ws/';
-        var PUBLICGRAPH = '<http://carre.kmi.open.ac.uk/riskdata>';
-        var CARRE_DEVICES = 'https://devices.carre-project.eu/devices/accounts';
+        var API =  'https://'+window.deployment+'.carre-project.eu/ws/'; //'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk/ws/';
+        $scope.selectGraph = function(graph){
+            $scope.selectedGraph = "<http://carre.kmi.open.ac.uk/"+graph+">";
+        };
+        $scope.graphs = [
+            "riskdata",
+            "public",
+            "dssdata",
+            "edudata"
+        ];
+        $scope.selectGraph($scope.graphs[0]);
+        
+        var CARRE_DEVICES = 'https://'+$scope.deployment+'.carre-project.eu/devices/accounts';
         $scope.loginUrl = CARRE_DEVICES + '/login?next=' + baseUrl;
         $scope.logoutUrl = CARRE_DEVICES + '/logout?next=' + baseUrl;
+        
+        
 
         /*-----Integration with the authentication example ------------*/
         
@@ -56,6 +68,7 @@ app.config(function($locationProvider) {
             "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
             "PREFIX sensors: <http://carre.kmi.open.ac.uk/ontology/sensors.owl#>",
             "PREFIX risk: <http://carre.kmi.open.ac.uk/ontology/risk.owl#>",
+            "PREFIX dss: <http://carre.kmi.open.ac.uk/ontology/dss.owl#>",
             "PREFIX carreManufacturer: <http://carre.kmi.open.ac.uk/manufacturers/>",
             "PREFIX carreUsers: <https://carre.kmi.open.ac.uk/users/>",
             "PREFIX educational: <http://carre.kmi.open.ac.uk/ontology/educational.owl#>",
@@ -65,7 +78,7 @@ app.config(function($locationProvider) {
             console.log('Request using SPARQL query method');
             var start = new Date().getTime(); //count the time for each request;
         
-            var GRAPH = PUBLICGRAPH;
+            var GRAPH = $scope.selectedGraph;
             if ($scope.sparql.rdfGraph === 'private' && $scope.user) {
                 GRAPH = '<https://carre.kmi.open.ac.uk/users/' + $scope.user.username + '>';
             }

@@ -3,6 +3,7 @@
 
 <head>
     <base href="/rdf-explorer/">
+    <!--<base href="/">-->
 
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-cookies.min.js"></script>
@@ -44,6 +45,8 @@
                 <h1>CARRE RDF explorer 
                 <small ng-show="user.username">Hi {{user.username}}, <a ng-href="{{logoutUrl}}">Logout</a></small>
                 <small ng-hide="user.username">Hello guest, please <a ng-href="{{loginUrl}}">Login</a></small>
+                <small ng-show="user.username" class="label label-primary">{{selectedGraph}}</small>
+                <small ng-show="user.username" style="font-size:0.7em" class="label label-default">{{deployment}}</small>
             </div>
             <div>
                 <uib-tabset type="pills">
@@ -57,7 +60,10 @@
                     </uib-tab>
 
                     <uib-tab heading="Sparql method" select="sparqlRequest()" ng-show="user.username">
-                        <hr>
+                        Default Graph : 
+                        <select name="singleSelect" style="width:100px; display:inline" class="form-control" ng-change="selectGraph(selectedGraphRaw)" ng-model="selectedGraphRaw">
+                            <option ng-repeat="option in graphs" value="{{option}}">{{option}}</option>
+                        </select>
                         <div style="display:inline">
                             <div style="padding: 11px;" class="label label-success">{{sparql.time}} sec</div>
                         </div>
@@ -65,6 +71,7 @@
                             <label ng-model="sparql.rdfGraph" uib-btn-radio="'private'" class="btn btn-default" ng-click="sparqlRequest()">Private RDF</label>
                             <label ng-model="sparql.rdfGraph" uib-btn-radio="'public'" class="btn btn-default" ng-click="sparqlRequest()">Public RDF</label>
                         </div>
+                        
 
                         <label>Limit results
                             <input min="1" max="10000" ng-model-options="{debounce: 1000}" type="number" ng-change="sparqlRequest()" ng-model="sparql.limit" class="form-control">
