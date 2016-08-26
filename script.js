@@ -9,7 +9,7 @@ app.config(function($locationProvider) {
         $location.url('/').replace();
         var baseUrl = $location.absUrl();
         //set up the urls 
-        var API =  'https://'+window.deployment+'.carre-project.eu/ws/'; //'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk/ws/';
+        var API =  'https://'+$scope.deployment+'.carre-project.eu/ws/'; //'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk/ws/';
         $scope.selectGraph = function(graph){
             $scope.selectedGraph = "<http://carre.kmi.open.ac.uk/"+graph+">";
         };
