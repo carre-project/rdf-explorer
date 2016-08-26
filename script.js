@@ -5,7 +5,7 @@ app.config(function($locationProvider) {
     .controller('MainCtrl', function($scope, $cookies, $http, uiGridGroupingConstants, $location,Bioportal) {
 
         //clean up the browser url
-        $scope.deployment = $location.search().deployment || 'devices.duth';
+        $scope.deployment = $location.search().deployment || 'devices';
         $location.url('/').replace();
         var baseUrl = $location.absUrl();
         //set up the urls 
