@@ -6,7 +6,7 @@ app.config(function($locationProvider) {
 
         //clean up the browser url
         $scope.deployment = $location.search().deployment || 'devices';
-        $location.url('/').replace();
+        // $location.url('/').replace();
         var baseUrl = $location.absUrl();
         //set up the urls 
         var API =  'https://'+$scope.deployment+'.carre-project.eu/ws/'; //'http://beta.carre-project.eu:5050/carre.kmi.open.ac.uk/ws/';
